@@ -10,18 +10,17 @@
 import { Component, For, Show, createEffect, createMemo, onCleanup, JSX } from "solid-js"
 import { Icon } from "@kilocode/kilo-ui/icon"
 import { Spinner } from "@kilocode/kilo-ui/spinner"
-import { Button } from "@kilocode/kilo-ui/button"
 import { useDialog } from "@kilocode/kilo-ui/context/dialog"
 import { createAutoScroll } from "@kilocode/kilo-ui/hooks"
 import { useSession } from "../../context/session"
 import { useServer } from "../../context/server"
 import { useLanguage } from "../../context/language"
 import { formatRelativeDate } from "../../utils/date"
-import { CloudImportDialog } from "./CloudImportDialog"
 import { FeedbackDialog } from "./FeedbackDialog"
 import { VscodeSessionTurn } from "./VscodeSessionTurn"
 import { RevertBanner } from "./RevertBanner"
 import { AccountSwitcher } from "../shared/AccountSwitcher"
+import { KiloNotifications } from "./KiloNotifications"
 import { WorkingIndicator } from "../shared/WorkingIndicator"
 import { activeUserMessageID as getActiveUserMessageID } from "../../context/session-queue"
 
@@ -50,7 +49,6 @@ export const MessageList: Component<MessageListProps> = (props) => {
 
   const autoScroll = createAutoScroll({
     working: () => session.status() !== "idle",
-    overflowAnchor: "dynamic",
   })
 
   // Resume auto-scroll when a bottom-dock permission/question is dismissed
@@ -92,7 +90,10 @@ export const MessageList: Component<MessageListProps> = (props) => {
   return (
     <div class="message-list-container">
       <Show when={isEmpty()}>
-        <AccountSwitcher class="account-switcher-welcome" />
+        <div class="welcome-header">
+          <AccountSwitcher class="account-switcher-welcome" />
+          <KiloNotifications />
+        </div>
       </Show>
       <div
         ref={autoScroll.scrollRef}
@@ -125,21 +126,6 @@ export const MessageList: Component<MessageListProps> = (props) => {
                   </For>
                 </div>
               </Show>
-              <Button
-                variant="ghost"
-                size="small"
-                onClick={() =>
-                  dialog.show(() => (
-                    <CloudImportDialog
-                      onImport={(id) => {
-                        session.selectCloudSession(id)
-                      }}
-                    />
-                  ))
-                }
-              >
-                {language.t("session.cloud.import")}
-              </Button>
               <button class="feedback-button" onClick={() => dialog.show(() => <FeedbackDialog />)}>
                 <Icon name="bubble-5" size="small" />
                 {language.t("feedback.button")}

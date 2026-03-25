@@ -214,6 +214,7 @@ export interface SlashCommandInfo {
 // Agent/mode info from CLI backend
 export interface AgentInfo {
   name: string
+  displayName?: string
   description?: string
   mode: "subagent" | "primary" | "all"
   native?: boolean
@@ -321,6 +322,8 @@ export type PermissionConfig = Partial<Record<string, PermissionRule>>
 export interface AgentConfig {
   model?: string | null
   prompt?: string
+  description?: string
+  mode?: "subagent" | "primary" | "all"
   temperature?: number
   top_p?: number
   steps?: number
